@@ -21,6 +21,8 @@ texte. Cela permet de :
 appartient à un sous-réseau spécifique.
  -  Éviter les erreurs : Empêcher de mélanger une chaîne de caractères quelconque avec une véritable adresse réseau 
 dans le code.
+
+
  
 # 2. Quelle est la différence entre une classe et un objet ?
  -  La Classe : C'est le "moule", le plan de fabrication ou la définition théorique. Elle définit quels attributs 
@@ -53,3 +55,69 @@ Pour produire un plan d'adressage complet, il manque plusieurs mécanismes autom
  -   La gestion des masques de sous-réseau pour définir la taille des réseaux.
  -   Un algorithme pour calculer la plage d'IP disponibles (de la première à la dernière IP).
  -   Un système de vérification des conflits (doublons d'adresses) sur un même réseau.
+
+# TP2 – Encapsulation.
+ ## Objectif: Introduction de l'encapsulation et des validations.
+ ## Notions étudiées* :
+     private, getters, setters, validation, this. Nous avons tester la création d'adresses IP vides, de réseaux 
+avec des masques invalides (comme 55) et d'équipements sans nom pour vérifier que vos "setters" corrigent bien les
+données..
+ ## Tests réalisés: 
+     Nous avons testés les cas invalides (adresses vides, masques CIDR > 32) et le programme a réagi.
+ ## Difficultés rencontrées: 
+     Nous avons l'erreur de compilation au début (méthode non reconnue) ou la configuration du jeton (token)
+ GitHub.
+ ## Réponses aux questions: 
+  
+   1.private: Pour protéger les données contre des modifications directes et incohérentes.
+   2. *Public vs Privé* : Un attribut public est accessible partout ; un attribut privé n'est accessible que dans sa propre classe.
+   3. *Getters/Setters* : Pour lire et modifier les données tout en appliquant des règles de validation.
+   4. *Validations réseau* : Cruciales pour éviter des erreurs de configuration (ex: masque CIDR 55) qui feraient planter un vrai système.
+   5. *this* : Désigne l'attribut de l'objet actuel pour le différencier d'un paramètre du même nom.
+   6. *Constructeur et Setters* : Pour valider les données dès la création de l'objet.
+   7. *Validation CIDR* : Un masque doit obligatoirement être entre 0 et 32.
+   8. *Sécurité* : L'encapsulation empêche l'injection de données corrompues dans les objets.
+
+###  Réponses aux questions de compréhension
+ # 1.Pourquoi utilise-t-on private dans les classes ?
+   L'utilisation du mot-clé private permet de restreindre l'accès direct aux attributs d'une classe depuis 
+l'extérieur. Cela garantit que les données ne peuvent pas être modifiées de manière arbitraire ou dangereus
+par d'autres parties du programme.
+
+  # 2.Quelle différence existe entre un attribut public et un attribut privé ?
+   Un attribut *public* est accessible et modifiable directement par n'importe quelle autre classe, ce qui peut 
+entraîner des configurations invalides (ex: une adresse IP vide). Un attribut *privé* est caché ; il ne peut être
+consulté ou modifié que via des méthodes spécifiques (getters et setters), ce qui permet de garder le contrôle sur 
+la donnée.
+
+ # 3. Pourquoi utilise-t-on des getters et setters ?
+   Les getters permettent de lire la valeur d'un attribut privé de manière sécurisée. Les setters permettent de
+ modifier la valeur tout en intégrant des mécanismes de contrôle et de validation avant l'affectation.
+
+ # 4.Pourquoi les validations sont-elles importantes dans un logiciel réseau ?
+   Dans une application réseau, des données incorrectes (comme un masque CIDR invalide ou une adresse IP vide) 
+peuvent provoquer des erreurs de calcul, des incohérences de configuration ou des pannes logiques du système. 
+Les validations garantissent la robustesse et la fiabilité du logiciel.
+
+ # 5.Quel est le rôle du mot-clé this ?
+   Le mot-clé this fait référence à l'instance courante de la classe. Il est principalement utilisé dans les 
+constructeurs ou les setters pour lever l'ambiguïté entre les attributs de la classe et les paramètres de la 
+méthode lorsqu'ils portent le même nom (ex: this.valeur = valeur).
+
+  # 6.Pourquoi le constructeur appelle-t-il les setters ?
+   Le constructeur appelle les setters pour réutiliser la logique de validation déjà définie dans ces derniers. 
+Cela évite de dupliquer le code de contrôle et assure que même lors de la création de l'objet, les données fournies 
+sont valides.
+
+  # 7.Pourquoi la validation du masque CIDR est-elle importante ?
+   Un masque CIDR doit impérativement être compris entre 0 et 32 pour être techniquement correct. Sans cette 
+validation, le programme pourrait tenter de traiter des réseaux inexistants ou provoquer des erreurs lors de 
+calculs de sous-réseaux.
+
+  # 8.Pourquoi l'encapsulation améliore-t-elle la sécurité logicielle ?
+   L'encapsulation protège l'intégrité des données en empêchant leur manipulation directe. En forçant le passage 
+par des méthodes de contrôle, on s'assure que l'objet reste toujours dans un état cohérent, ce qui limite les
+comportements imprévisibles et les vulnérabilités liées à des données mal formées.
+
+
+
