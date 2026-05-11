@@ -52,6 +52,7 @@ public class ReseauIP {
     public void afficher() {
         System.out.println("Réseau : " + adresseReseau + "/" + masqueCidr);
         System.out.println("Description :" + description);
+        
     }
     
 }
