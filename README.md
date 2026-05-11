@@ -282,6 +282,84 @@ l'identification et la diffusion ; elles ne peuvent donc pas être assignées à
 
  8. *Importance du moteur* : Ce moteur automatise une tâche complexe et sujette aux erreurs humaines, rendant l'application
  IPPlan-Manager professionnelle et fiable.
+
+
+# TP6 - VLAN et segmentation logique
+
+ ### Objectif
+L'objectif de ce TP est de mettre en place une *segmentation logique* du réseau au sein de l'application 
+IPPlan-Manager. Il s'agit de modéliser des VLANs (Virtual Local Area Networks) et de les associer automatiquement
+ aux résultats d'adressage IP calculés par le moteur VLSM.
+
+### Notions étudiées
+ * *Segmentation réseau (Couche 2)* : Compréhension de l'isolation des domaines de diffusion.
+ * *Encapsulation et Association* : Création d'une relation entre un objet VLAN et un objet ResultatVLSM.
+ * *Gestion de collections complexes* : Utilisation de ArrayList pour stocker et manipuler des listes dynamiques 
+de VLANs.
+ * *Détection de criticité* : Implémentation d'algorithmes de recherche pour identifier les réseaux dépassant une 
+certaine capacité (ex: > 100 hôtes).
+
+### Scénarios testés
+ * *Scénario Entreprise Classique* : Génération de 4 VLANs standards (Technique, WiFi, Administration, Serveurs) 
+avec des IDs allant de 10 en 10.
+ * *Scénario Campus Universitaire* : Test de montée en charge avec des besoins importants 
+(ex: 500 hôtes pour les étudiants) pour valider l'affichage des VLANs critiques.
+ * *Recherche Unitaire* : Vérification de la méthode de recherche par ID de VLAN pour s'assurer que l'application 
+retrouve correctement les informations d'un segment spécifique.
+
+### Résultats obtenus
+L'application produit désormais un inventaire réseau détaillé où chaque segment est identifié par :
+ 1. *Son ID VLAN* (ex: 10, 20).
+ 2. *Son Nom de service* (ex: TECHNIQUE).
+ 3. *Ses paramètres IP* (Adresse réseau, Masque CIDR, Plage d'adresses utilisables).
+ 4. *Son statut de criticité* (Alerte si la capacité > 100 hôtes).
+
+### ### Difficultés rencontrées
+ * *Incohérence des Getters* : Ajustement des méthodes getIdVlan() et getNomVlan() pour correspondre aux noms des
+ variables réelles dans la classe VLAN.
+ * *Portée des variables* : Résolution des erreurs de compilation liées à l'utilisation de variables locales en 
+dehors de la méthode main.
+ * *Logique de boucle* : Synchronisation du nom de la liste vlans entre sa déclaration et son utilisation dans 
+les boucles de traitement du gestionnaire.
+
+### ### Réponses aux questions
+
+    1. *Pourquoi les VLANs sont-ils importants dans les réseaux modernes ?*
+   Ils permettent de segmenter un réseau physique unique en plusieurs réseaux logiques indépendants. Cela réduit 
+la taille des domaines de diffusion (broadcast), améliore les performances globales et permet d'isoler les flux 
+de données par département.
+
+ 2. *Pourquoi un VLAN est-il souvent associé à un sous-réseau spécifique ?*
+   Chaque VLAN forme un domaine de diffusion séparé au niveau de la couche 2. Pour que les équipements d'un VLAN 
+communiquent entre eux et avec l'extérieur, ils doivent appartenir à un plan d'adressage IP (sous-réseau) cohérent
+ qui leur est propre.
+
+ 3. *Pourquoi la séparation logique améliore-t-elle la sécurité ?*
+   Elle empêche les utilisateurs d'un VLAN d'accéder aux données d'un autre VLAN sans passer par un routeur ou un
+ pare-feu. Par exemple, le VLAN "WIFI_INVITÉS" ne peut pas voir les données du VLAN "SERVEURS".
+
+ 4. *Quel est le rôle de la classe GestionnaireVLAN ?*
+   Cette classe agit comme un service métier qui centralise la gestion de tous les VLANs de l'infrastructure.
+ Elle permet d'ajouter des VLANs, de les lister, d'effectuer des recherches par ID et d'analyser la criticité du 
+réseau.
+
+ 5. *Pourquoi la classe VLAN contient-elle un objet ResultatVLSM ?*
+   C'est une association qui permet de lier directement l'identifiant logique du VLAN aux informations techniques 
+de son adressage IP (adresse réseau, masque, passerelle) calculées précédemment.
+
+ 6. *Pourquoi utilise-t-on encore ArrayList dans ce TP ?*
+   ArrayList est une collection dynamique idéale pour stocker un nombre variable de VLANs. Elle facilite le 
+parcours des données avec des boucles for-each pour les affichages et les recherches.
+
+ 7. *Pourquoi les responsabilités des classes doivent-elles être séparées ?*
+   Cela suit le principe de responsabilité unique (SOLID) : la classe VLAN ne fait que stocker des données, 
+tandis que GestionnaireVLAN s'occupe de la logique de gestion. Cela rend le code plus facile à maintenir et à 
+faire évoluer.
+
+ 8. *Pourquoi le projet commence-t-il maintenant à ressembler à une véritable application professionnelle ?*
+   L'application gère désormais des scénarios complexes mêlant calculs algorithmiques (VLSM) et organisation 
+d'infrastructure (VLAN). L'utilisation d'une architecture en couches et d'objets métier interconnectés reflète 
+les standards de développement logiciel.
     
 
 
