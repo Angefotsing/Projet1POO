@@ -360,6 +360,98 @@ faire évoluer.
    L'application gère désormais des scénarios complexes mêlant calculs algorithmiques (VLSM) et organisation 
 d'infrastructure (VLAN). L'utilisation d'une architecture en couches et d'objets métier interconnectés reflète 
 les standards de développement logiciel.
+
+
+# TP7 – Validations avancées et détection des conflits
+
+## ## Objectif
+L'objectif de ce TP est de renforcer la robustesse de l'application *IPPlan-Manager* en ajoutant une couche de
+ validation métier. Il s'agit de détecter les incohérences lors de la saisie des données réseau 
+(adresses invalides, doublons d'identifiants VLAN ou chevauchements de plages IP) et de les gérer via un système
+ d'exceptions personnalisées.
+
+## ## Notions étudiées
+ * *Exceptions personnalisées* : Création de classes héritant de Exception pour des erreurs spécifiques au 
+domaine réseau.
+ * *Gestion des erreurs (Try/Catch/Throw)* : Mise en place d'une structure de contrôle pour capturer les anomalies
+ sans arrêter brutalement le programme.
+ * *Algorithmique de détection de chevauchement* : Comparaison de plages d'adresses IP converties en entiers longs.
+ * *Validation de cohérence* : Vérification de l'unicité des attributs critiques (ID de VLAN).
+ * *Robustesse logicielle* : Séparation de la logique de calcul (moteur) et de la logique de validation.
+
+## ## Scénarios testés
+ 1. *Test d'adresse IP invalide* : Tentative de création d'un réseau avec une adresse hors limites 
+(ex: 192.168.300.0), déclenchant une AdresseIPInvalideException.
+
+ 2. *Test de conflit d'ID VLAN* : Ajout de deux VLANs avec le même identifiant (ID 20) dans une liste, déclenchant
+ une ConflitVLANException.
+
+ 3. *Test de chevauchement de réseaux (Overlap)* : Simulation de deux réseaux (192.168.1.0/25 et 192.168.1.64/26) 
+occupant la même plage d'adresses, déclenchant une ChevauchementReseauException.
+
+ 4. *Test de capacité insuffisante* : Vérification que les besoins cumulés ne dépassent pas la capacité du réseau
+ de départ (ReseauInsuffisantException).
+
+## ## Résultats obtenus
+ * *Validation réussie* : Les scénarios de tests affichent désormais des messages d'erreurs clairs et explicites
+ au lieu de simples codes d'erreur ou de plantages.
+ * *Journalisation des erreurs* : Utilisation de System.err pour distinguer visuellement les erreurs capturées 
+des sorties standards dans la console NetBeans.
+ * *Plan d'adressage fiable* : Seuls les plans respectant toutes les contraintes de sécurité et de logique réseau 
+sont validés pour l'export.
+
+## ## Difficultés rencontrées
+ * *Conversion des IP* : La manipulation des masques CIDR pour calculer les bornes de début et de fin de réseau
+ a nécessité une attention particulière sur les calculs binaires.
+ * *Intégration dans le Main* : Harmoniser les constructeurs des classes (comme ResultatVLSM) avec les nouveaux 
+besoins de validation a nécessité quelques corrections sur les signatures de méthodes.
+ * *Gestion des flux* : S'assurer que chaque bloc try est indépendant pour tester plusieurs erreurs à la suite
+ dans le même fichier Main.java.
+
+## ## Réponses aux questions
+
+1. *Pourquoi les validations avancées sont-elles indispensables dans un outil IPAM ?*
+   Dans un outil de gestion d'adresses IP (IPAM), la moindre erreur de saisie ou de calcul peut paralyser un 
+réseau entier. Les validations avancées garantissent qu'aucune configuration incohérente 
+(comme une IP hors plage ou un conflit de VLAN) ne soit déployée, assurant ainsi la stabilité et la sécurité 
+de l'infrastructure.
+
+ 2. *Quelle est la différence entre une erreur simple et une exception en Java ?*
+   Une erreur simple (souvent gérée par des if/else) est un traitement local qui oblige l'appelant à vérifier
+ manuellement si une opération a réussi (ex: tester si une méthode retourne null). Une *exception* est un mécanisme
+ plus puissant qui interrompt le flux normal du programme et force le développeur à traiter l'anomalie dans un bloc
+ dédié (try-catch), rendant le code plus robuste et plus facile à déboguer.
+
+ 3. *Pourquoi crée-t-on des exceptions personnalisées ?*
+   Les exceptions personnalisées (comme ConflitVLANException) permettent de nommer précisément le problème rencontré.
+ Cela facilite la maintenance car le message d'erreur est explicite et propre au métier du réseau, contrairement aux
+ exceptions génériques de Java (comme IllegalArgumentException) qui sont trop vagues.
+
+ 4. *Quel est le rôle du bloc try/catch ?*
+   * *Le bloc try* : Il entoure le code "suspect" qui pourrait générer une erreur (ex: le calcul VLSM ou la 
+validation d'une IP).
+   * *Le bloc catch* : Il "attrape" l'exception si elle se produit et exécute un code de secours
+ (affichage d'un message d'alerte) pour éviter que l'application ne s'arrête brutalement.
+
+ 5. *Pourquoi deux VLANs ne doivent-ils pas avoir le même identifiant dans une même infrastructure ?*
+   L'ID de VLAN (identifiant numérique) sert à marquer les trames Ethernet pour les séparer logiquement sur
+ les équipements réseau (switches). Si deux VLANs partagent le même ID, le switch ne pourra plus distinguer
+ les trafics, ce qui provoquera des fuites de données entre services et des dysfonctionnements majeurs.
+
+ 6. *Pourquoi deux sous-réseaux ne doivent-ils pas se chevaucher ?*
+   Le chevauchement (overlap) signifie qu'une même adresse IP appartient à deux réseaux différents.
+ Pour un routeur, cela crée une ambiguïté : il ne saura pas vers quel segment réseau acheminer les paquets,
+ entraînant des pertes de connexion et des conflits d'adressage.
+
+ 7. *Pourquoi transforme-t-on les adresses IP en entiers pour comparer des plages réseau ?*
+   Comparer des adresses IP sous forme de texte ("192.168.1.5") est complexe et lent. En les convertissant 
+en *entiers 32 bits*, on peut utiliser des opérateurs mathématiques simples (<, >, <=, >=) pour vérifier 
+instantanément si une adresse se situe entre la borne de début et la borne de fin d'un réseau.
+
+ 8. *Pourquoi la classe ValidateurPlanAdressage doit-elle être séparée du moteur VLSM ?*
+   Cela respecte le principe de *responsabilité unique* (SOLID). Le moteur VLSM est responsable uniquement
+ du calcul des plages IP, tandis que le validateur est responsable de la vérification de la cohérence globale.
+ Cette séparation rend le code plus modulaire, plus facile à tester et à faire évoluer.
     
 
 
