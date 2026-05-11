@@ -23,6 +23,8 @@ appartient à un sous-réseau spécifique.
 dans le code.
 
 
+
+
  
 # 2. Quelle est la différence entre une classe et un objet ?
  -  La Classe : C'est le "moule", le plan de fabrication ou la définition théorique. Elle définit quels attributs 
@@ -228,6 +230,58 @@ risquer de casser l'affichage.
      Pour eleminer l'erreur humaine. un administrateur peut se tromper dans un calcul binaire, mais un algorithme bien code 
 ne se trompe jamais.
 
+###      TP5 - Moteur VLSM
+
+## Objectif
+L'objectif de ce TP est de développer un *moteur VLSM* (Variable Length Subnet Mask) capable de générer automatiquement
+ un plan d'adressage IP optimisé à partir d'une liste de besoins en hôtes exprimés par l'utilisateur.
+
+## Notions étudiées
+ * *VLSM* : Attribution de masques de sous-réseau de tailles variables pour optimiser l'espace d'adressage.
+ * *Tri de collections* : Utilisation de Collections.sort avec un Comparator personnalisé pour traiter les besoins par 
+ordre décroissant.
+ * *Classe de service métier* : Création d'une classe MoteurVLSM dédiée à la logique algorithmique du projet.
+ * *Manipulation d'IP* : Conversion d'adresses IP en entiers pour faciliter les calculs mathématiques de plages d'adresses.
+
+## Scénarios testés
+ 1. *Scénario Initial* : Réseau standard avec 5 services (TECH, WIFI, ADMIN, SERVEURS, DIRECTION).
+ 2. *Petite Entreprise* : Test sur 4 services avec des besoins plus restreints (ADMIN : 25, COMPTA : 12, WIFI_INVITES : 40, SERVEURS : 8).
+ 3. *Campus Universitaire* : Test à grande échelle incluant des besoins importants (ETUDIANTS : 500, PERSONNEL : 120, etc.).
+
+## Résultats obtenus
+Les plans d'adressage générés respectent la hiérarchie des besoins. Par exemple, pour un besoin de 120 hôtes, le moteur 
+propose un masque */25* offrant 126 adresses utilisables. Les plages d'adresses utilisables (première et dernière IP)
+ sont calculées dynamiquement pour chaque sous-réseau.
+
+## Difficultés rencontrées
+ * *Gestion du tri* : Comprendre pourquoi le tri décroissant est vital pour éviter la fragmentation de l'espace d'adressage.
+ * *Calcul des plages* : La conversion mathématique entre les formats "Pointed Decimal" et "Integer" pour ne pas chevaucher
+ les sous-réseaux.
+
+## Réponses aux questions de compréhension
+ 1. *Économie d'adresses* : Le VLSM évite le gaspillage en adaptant la taille du masque au besoin réel plutôt que d'utiliser 
+un masque fixe pour tous.
+
+ 2. *Tri décroissant* : On traite les plus grands besoins en premier pour garantir qu'un bloc d'adresses contiguës suffisant
+ soit disponible avant que l'espace ne soit fragmenté par de petits réseaux.
+
+ 3. *Besoin vs Résultat* : Un BesoinReseau est une exigence utilisateur (nom, nombre d'hôtes), tandis qu'un ResultatVLSM est
+ la solution technique calculée (IP, CIDR, Masque, Plage).
+
+ 4. *Classe de service* : MoteurVLSM est une classe de service car elle porte la logique "métier" (le calcul) sans stocker de
+ données de manière permanente.
+
+ 5. *Conversion en entier* : Transformer l'IP en entier simplifie les calculs de sauts d'adresses (ex: Adresse + Taille du
+ bloc).
+
+ 6. *Rôle de calculerCidrPourHotes* : Elle détermine automatiquement le préfixe réseau le plus petit capable de contenir le
+ nombre d'hôtes demandé.
+
+ 7. *Adresses réservées* : L'adresse de réseau et l'adresse de broadcast sont réservées par le protocole IP pour 
+l'identification et la diffusion ; elles ne peuvent donc pas être assignées à des hôtes.
+
+ 8. *Importance du moteur* : Ce moteur automatise une tâche complexe et sujette aux erreurs humaines, rendant l'application
+ IPPlan-Manager professionnelle et fiable.
     
 
 
