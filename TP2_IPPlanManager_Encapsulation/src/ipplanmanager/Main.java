@@ -33,10 +33,8 @@ public class Main {
          System.out.println();
          System.out.println("----- Équipement 2 -----");
          serveur.afficher();
+         System.out.println("L'adresse ip1 est-elle locale ?" + ip1.estAdresseLocale());
          
-         
-        
-        
     }
     
     

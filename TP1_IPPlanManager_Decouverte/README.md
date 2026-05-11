@@ -120,4 +120,52 @@ par des méthodes de contrôle, on s'assure que l'objet reste toujours dans un �
 comportements imprévisibles et les vulnérabilités liées à des données mal formées.
 
 
+# TP3 - Collections et composition
+
+## Objectif
+L'objectif de ce TP était d'introduire la notion de collections (via ArrayList) et de gérer les relations 
+entre objets (composition) pour rendre l'architecture du projet IPPlanManager plus réaliste et évolutive.
+
+## Notions étudiées
+-  Composition : Relation où une classe est composée d'objets d'autres classes.
+-  ArrayList : Utilisation d'une liste dynamique pour stocker plusieurs objets.
+-  Parcours de listes : Utilisation de la boucle for-each pour afficher ou traiter les données.
+-  Recherche : Implémentation d'un algorithme de recherche d'objet dans une collection par son nom.
+
+## Tests réalisés
+1. Création d'une infrastructure réseau complète.
+2. Ajout de plusieurs sous-réseaux (ADMIN, TECH, WIFI).
+3. Configuration d'un routeur et d'un serveur possédant chacun plusieurs interfaces réseau.
+4. Test de la méthode rechercherEquipement pour vérifier si un matériel est présent dans l'infrastructure.
+
+## Difficultés rencontrées
+-  Gestion des erreurs de compilation liées aux imports (java.util.ArrayList).
+-  Compréhension de la portée des méthodes (placer la recherche dans la classe InfrastructureReseau et non 
+InterfaceReseau).
+-  Résolution des erreurs d'exécution NoClassDefFoundError en utilisant le "Clean and Build".
+
+## Réponses aux questions
+1.  Composition : C'est quand une classe possède des attributs qui sont des objets d'autres classes 
+(ex: l'Infrastructure a des Sous-réseaux).
+
+2.  ArrayList: On l'utilise car elle permet d'ajouter ou supprimer des équipements dynamiquement, contrairement 
+à un tableau fixe.
+
+3.  Variable vs Collection : Une variable stocke une seule donnée ; une collection en stocke une liste 
+(une multitude).
+
+4.  Interfaces multiples : Pour qu'un équipement puisse communiquer avec différents réseaux
+ (ex: WAN et LAN sur un routeur).
+
+5.  Sous-réseaux multiples : Pour segmenter le trafic, améliorer la sécurité et organiser le plan d'adressage IP.
+
+6.  Boucle for-each* : Elle sert à parcourir chaque élément d'une liste du début à la fin de manière simple.
+
+7.  InfrastructureReseau : Elle devient la classe "chef d'orchestre" qui centralise toute la logique de gestion
+ du parc réseau.
+
+8. *Applications 
+professionnelles* : Les collections permettent de gérer des volumes de données massifs 
+(milliers de serveurs, utilisateurs, etc.) de façon fluide.
+
 
