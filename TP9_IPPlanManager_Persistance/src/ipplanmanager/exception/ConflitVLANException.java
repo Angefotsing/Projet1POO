@@ -1,0 +1,19 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package ipplanmanager.exception;
+
+import ipplanmanager.*;
+
+/**
+ *
+ * @author ANGELA
+ */
+public class ConflitVLANException extends Exception {   
+        public ConflitVLANException(String message) {  
+        super(message);  
+        }
+} 
+    
+

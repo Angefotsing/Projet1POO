@@ -31,6 +31,5 @@ public class Main {
         vlanRecherche.afficher();       
     } else {         
         System.out.println("VLAN introuvable.");       
-}   
-    }
+}    }
 }

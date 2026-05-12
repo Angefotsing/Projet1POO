@@ -9,49 +9,68 @@ package ipplanmanager;
  * @author ANGELA
  */
 public class CalculateurReseau {   
-    public static int calculerNombreHotes(int cidr) {  
-        if (cidr < 0 || cidr > 32) {       
-            return 0;       
-        }    
-        int bitsHotes = 32 - cidr;  
-        return (int) Math.pow(2, bitsHotes) - 2;    
-    }      
-    public static String obtenirClasseReseau(String adresseIP) {    
-        String[] parties = adresseIP.split("\\.");     
-        int premierOctet = Integer.parseInt(parties[0]);  
-        if (premierOctet >= 1 && premierOctet <= 126) {    
-            return "Classe A";       
-        }        
-        if (premierOctet >= 128 && premierOctet <= 191) { 
-            return "Classe B";        
-        }        
-        if (premierOctet >= 192 && premierOctet <= 223) {   
-            return "Classe C"; 
-  
+    public static int calculerNombreHotes(int cidr) {   
+        if (cidr < 0 || cidr > 32) {        
+            return 0;        
+        }         int bitsHotes = 32 - cidr;      
+        if (bitsHotes == 0) {        
+            return 1;        
         }     
-            return "Classe inconnue";   
-    }      
-    public static String obtenirMasqueDecimal(int cidr) {  
-         switch (cidr) {       
-            case 8:                 return "255.0.0.0";   
-            case 16:                 return "255.255.0.0";      
-            case 24:                 return "255.255.255.0";          
-            case 25:                 return "255.255.255.128";        
-            case 26:                 return "255.255.255.192";        
-            case 27:                 return "255.255.255.224";         
-            case 28:                 return "255.255.255.240";         
-            default:                 return "Masque non disponible";       
-        }  
+        return (int) Math.pow(2, bitsHotes) - 2;    
+    }    
+    public static int calculerCidrPourHotes(int nombreHotes) {       
+        for (int cidr = 32; cidr >= 0; cidr--) {           
+            int capacite = calculerNombreHotes(cidr);          
+            if (capacite >= nombreHotes) {              
+                return cidr;           
+            }       
+        }        
+        return -1;  
+    }   
+    public static String obtenirMasqueDecimal(int cidr) {    
+        int masque = 0xffffffff << (32 - cidr);        
+        int octet1 = (masque >>> 24) & 255;      
+        int octet2 = (masque >>> 16) & 255;      
+        int octet3 = (masque >>> 8) & 255;       
+        int octet4 = masque & 255;       
+        return octet1 + "." + octet2 + "." + octet3 + "." + octet4;     
+    }  
+    public static int convertirIpEnEntier(String ip) {     
+        String[] parties = ip.split("\\.");      
+        int resultat = 0;      
+        for (int i = 0; i < 4; i++) {  
+            resultat = resultat * 256 + Integer.parseInt(parties[i]);        
+        }     
+        return resultat; 
+    }    
+    public static String convertirEntierEnIp(int valeur) {  
+        int octet1 = (valeur >>> 24) & 255;       
+        int octet2 = (valeur >>> 16) & 255;       
+        int octet3 = (valeur >>> 8) & 255;   
+        int octet4 = valeur & 255; 
+        return octet1 + "." + octet2 + "." + octet3 + "." + octet4;   
+    }  
+    public static int calculerTailleBloc(int cidr) { 
+        return (int) Math.pow(2, 32 - cidr);    
+    } 
+    public static String obtenirClasseReseau(String ip) {
+    String[] parties = ip.split("\\.");
+    int premierOctet = Integer.parseInt(parties[0]);
+
+    if (premierOctet >= 1 && premierOctet <= 126) return "Classe A";
+    if (premierOctet >= 128 && premierOctet <= 191) return "Classe B";
+    if (premierOctet >= 192 && premierOctet <= 223) return "Classe C";
+    
+    return "Classe inconnue ou réservée";
     }
-    public static boolean estReseauPrive(String adresseIP) {
-        String[] parties = adresseIP.split("\\.");
-        int octet1 = Integer.parseInt(parties[0]);
-        int octet2 = Integer.parseInt(parties[1]);
-        if (octet1 == 10) return true;
-        if (octet1 == 172 && (octet2 <= 31)) return true;
-        if (octet1 == 192 && octet2 == 168)return true;
-        return false;
-        
-        
-                }
+    public static String calculerPremiereAdresseUtilisable(String adresseReseau) {
+    int adresseInt = convertirIpEnEntier(adresseReseau);
+    return convertirEntierEnIp(adresseInt + 1);
     }
+    public static String calculerDerniereAdresseUtilisable(String adresseReseau, int cidr) {
+    int adresseInt = convertirIpEnEntier(adresseReseau);
+    int taille = calculerTailleBloc(cidr);
+    // Adresse de broadcast est adresse + taille - 1, donc dernière utilisable est - 2
+    return convertirEntierEnIp(adresseInt + taille - 2);
+    }
+} 

@@ -14,6 +14,7 @@ public class ResultatVLSM {
     private int cidr;   
     private String masqueDecimal;  
     private int capacite;    
+    private String Cidr;
     public ResultatVLSM(String nomBesoin, String adresseReseau, int cidr, String masqueDecimal, int capacite) {        
         this.nomBesoin = nomBesoin;        
         this.adresseReseau = adresseReseau;  
@@ -35,6 +36,13 @@ public class ResultatVLSM {
     public void afficher() {      
         System.out.println(nomBesoin + " -> " + adresseReseau + "/" + cidr                 + " | Masque : " + masqueDecimal                 + " | Capacité : " + capacite + " hôtes");   
     }
-} 
+    public ResultatVLSM(String nomBesoin, String adresseReseau, String cidr, int capacite) {
+    this.nomBesoin = nomBesoin;
+    this.adresseReseau = adresseReseau;
+    this.Cidr = cidr;
+    this.capacite = capacite;
+}
+    
+}
 
 

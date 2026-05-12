@@ -9,9 +9,16 @@ public class GestionnaireVLAN {
     public GestionnaireVLAN() {   
         vlans = new ArrayList<>(); 
     }    
-    public void ajouterVLAN(VLAN vlan) {     
-        vlans.add(vlan);     
-    }     
+    public void ajouterVLAN(VLAN vlan) throws ConflitVLANException {    
+        if (vlan == null) {     
+            return;  
+        }     for (VLAN v : vlans) {    
+            if (v.getId() == vlan.getId()) {    
+                throw new ConflitVLANException("Conflit VLAN : l'identifiant " + vlan.getId() + " est déjà utilisé.");        
+            }   
+        } 
+        vlans.add(vlan);
+    }
     public void afficherTousLesVLANs() {     
         for (VLAN vlan : vlans) {           
             vlan.afficher();          
@@ -47,5 +54,8 @@ public class GestionnaireVLAN {
     if (!trouve) {
         System.out.println("Aucun VLAN critique détecté.");
     }
-}
+    }
+    public ArrayList<VLAN> getVlans() {  
+        return vlans;
+    } 
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package ipplanmanager;
+
 
 /**
  *
@@ -73,4 +73,40 @@ public class CalculateurReseau {
     // Adresse de broadcast est adresse + taille - 1, donc dernière utilisable est - 2
     return convertirEntierEnIp(adresseInt + taille - 2);
     }
+    public static boolean estAdresseIPValide(String ip) {  
+        if (ip == null || ip.isEmpty()) {     
+            return false;    
+        }    
+        String[] parties = ip.split("\\."); 
+        if (parties.length != 4) {    
+            return false;    
+        }    
+        for (String partie : parties) {   
+            try {             int valeur = Integer.parseInt(partie);       
+            if (valeur < 0 || valeur > 255) {      
+                return false;           
+            }        
+            } 
+            catch (NumberFormatException e) {       
+                return false;         
+            }    
+        }    
+        return true; 
+    } 
+    public static void verifierAdresseIP(String ip) throws AdresseIPInvalideException { 
+        if (!estAdresseIPValide(ip)) {    
+            throw new AdresseIPInvalideException("Adresse IP invalide : " + ip);   
+        }
+    }     
+    public static int calculerAdresseFin(String adresseReseau, int cidr) {   
+    int debut = convertirIpEnEntier(adresseReseau);    
+    int tailleBloc = calculerTailleBloc(cidr);    
+    return debut + tailleBloc - 1;
+    } 
+    public static boolean reseauxSeChevauchent(String adresse1, int cidr1, String adresse2, int cidr2) {   
+    int debut1 = convertirIpEnEntier(adresse1);    
+    int fin1 = calculerAdresseFin(adresse1, cidr1);   
+    int debut2 = convertirIpEnEntier(adresse2);     int fin2 = calculerAdresseFin(adresse2, cidr2);    
+    return debut1 <= fin2 && debut2 <= fin1; 
+    } 
 } 

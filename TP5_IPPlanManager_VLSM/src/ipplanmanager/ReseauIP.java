@@ -54,5 +54,6 @@ public class ReseauIP {
         System.out.println("Description : "+ description); 
         System.out.println("Classe réseau : "             + CalculateurReseau.obtenirClasseReseau(adresseReseau)); 
         System.out.println("Masque décimal : "             + CalculateurReseau.obtenirMasqueDecimal(masqueCidr));    
-        System.out.println("Capacité maximale : "             + CalculateurReseau.calculerNombreHotes(masqueCidr)             + " hôtes"); } 
+        System.out.println("Capacité maximale : "             + CalculateurReseau.calculerNombreHotes(masqueCidr)             + " hôtes"); 
+    } 
 }
