@@ -455,5 +455,90 @@ instantanément si une adresse se situe entre la borne de début et la borne de 
     
 
 
+# # TP8 – Moteur de recommandations
 
+## ## Objectif
+L'objectif de ce TP est de concevoir et d'intégrer un *système expert d'analyse réseau* capable de parcourir
+ un plan d'adressage VLAN existant pour proposer des conseils techniques automatisés. Ce moteur permet
+ d'améliorer la sécurité, l'organisation et la performance de l'infrastructure en identifiant des 
+configurations sous-optimales.
 
+## ## Notions étudiées
+ * *Interfaces Java* : Utilisation de l'interface RegleRecommandation pour définir un contrat standard pour
+ toutes les règles métier.
+ * *Polymorphisme* : Capacité du moteur à traiter différentes règles de manière générique via une liste unique.
+ * *Séparation des responsabilités* : Découplage entre la logique de stockage (Gestionnaire) et la logique 
+d'analyse (Moteur).
+ * *Extensibilité logicielle* : Architecture permettant d'ajouter de nouvelles règles (comme RecommandationAdministration) sans modifier le code central du moteur.
+ * *Règles métier* : Implémentation de conditions logiques basées sur des standards de réseaux réels
+ (isolation WiFi, surveillance des serveurs).
+
+## ## Scénarios testés
+ 1. *Détection de VLAN WiFi Invité* : Vérification que les réseaux destinés aux invités sont bien isolés des
+ ressources internes critiques.
+ 2. *Surveillance des VLANs Serveurs* : Identification des zones contenant des serveurs pour recommander des 
+politiques de sauvegarde et de sécurité renforcées.
+ 3. *Analyse de taille (Grand VLAN)* : Détection des VLANs ayant un nombre d'hôtes très élevé pour suggérer
+ une segmentation afin de limiter les domaines de broadcast.
+ 4. *Règle d'Administration* : Scan des noms de VLAN pour identifier les segments sensibles (contenant "ADMIN") et préconiser une restriction d'accès.
+ 5. *Analyse de la marge d'adressage* : Calcul de la différence entre la capacité du sous-réseau et le besoin
+ initial pour alerter sur un manque futur d'évolutivité.
+
+## ## Recommandations obtenues
+ * *Alertes de sécurité* : Des messages clairs s'affichent désormais pour les VLANs d'administration,
+ conseillant de limiter l'accès aux seuls administrateurs réseau.
+ * *Conseils d'évolutivité* : Pour les réseaux trop denses (ex: besoin de 120 hôtes sur une capacité de 126),
+ le système recommande de prévoir une marge plus confortable.
+ * *Optimisation de performance* : Suggestion de découpage pour les VLANs de grande taille afin d'améliorer
+ la fluidité du trafic.
+
+## ## Difficultés rencontrées
+ * *Gestion des types de retour* : S'assurer que la méthode analyser() retourne null lorsqu'une règle ne
+ s'applique pas, pour éviter les erreurs dans la boucle de traitement du moteur.
+ * *Enrichissement des données* : Nécessité de modifier la classe ResultatVLSM pour y inclure le nombre 
+d'hôtes demandés au départ, afin de permettre le calcul de la marge d'adresse.
+ * *Cohérence des noms* : Synchronisation entre le Main et les noms de classes de règles (ex:
+ RecommandationServeurs) pour éviter les erreurs de compilation "Symbol not found".
+
+## ## Réponses aux questions
+
+ 1. *Quel est le rôle d’un moteur de recommandations dans un outil IPAM ?*
+   Le moteur de recommandations agit comme un système expert. Son rôle est d'analyser automatiquement les 
+données du plan d'adressage (VLANs, sous-réseaux) pour identifier des erreurs potentielles, des risques de
+ sécurité ou des optimisations possibles que l'administrateur réseau pourrait ne pas voir immédiatement.
+
+ 2. *Pourquoi utilise-t-on une interface pour les règles de recommandation ?*
+   L'utilisation d'une interface (comme RegleRecommandation) permet d'imposer un contrat standard à toutes
+ les règles. Cela garantit que chaque règle possédera la méthode analyser(), ce qui permet au moteur de les
+ manipuler de façon uniforme sans connaître le détail interne de chaque règle.
+
+ 3. *Quelle est la différence entre une classe concrète et une interface ?*
+   Une *interface* est un modèle purement abstrait qui définit ce que les classes doivent faire (les 
+signatures des méthodes) sans fournir le code. Une *classe concrète* est une implémentation réelle qui 
+définit comment l'action est réalisée (le code source) et qui peut être instanciée pour créer des objets.
+
+ 4. *Pourquoi la méthode analyser() peut-elle retourner null ?*
+   Elle retourne null lorsqu'une règle ne s'applique pas au VLAN analysé. Par exemple, si la règle cherche 
+des VLANs "ADMIN" et qu'elle analyse un VLAN "ETUDIANTS", elle renvoie null pour signifier qu'il n'y a aucune
+ recommandation à générer pour ce cas précis.
+
+ 5. *Pourquoi le moteur de recommandations illustre-t-il le polymorphisme ?*
+   Le polymorphisme est illustré car le moteur manipule une liste d'objets de type RegleRecommandation.
+ Bien que chaque objet soit différent (RecommandationWifi, RecommandationServeurs, etc.), le moteur appelle 
+la même méthode analyser() sur chacun d'eux, et chaque objet réagit selon sa propre logique interne.
+
+ 6. *Pourquoi est-il préférable de créer une classe par règle au lieu de mettre tous les tests dans le Main ?*
+   Cela respecte le principe de *responsabilité unique* et d'*extensibilité* (Open/Closed Principle). 
+On peut ajouter, supprimer ou modifier une règle simplement en créant ou supprimant une classe, sans risquer
+ de casser le code principal du Main ou du moteur. Le code est ainsi beaucoup plus propre et maintenable.
+
+ 7. *Pourquoi un VLAN WiFi invité doit-il être isolé des réseaux internes ?*
+   Pour des raisons de *sécurité*. Les invités ne sont pas des utilisateurs de confiance. Les isoler dans 
+un VLAN spécifique empêche un utilisateur externe d'accéder aux serveurs sensibles, aux bases de données ou 
+aux dossiers partagés de l'entreprise en cas d'attaque ou de malware sur son appareil.
+
+ 8. *Pourquoi les VLANs de grande taille doivent-ils être surveillés ?*
+   Les VLANs trop grands (contenant beaucoup d'hôtes) génèrent un trafic de *broadcast* important (diffusion)
+ qui peut saturer la bande passante et ralentir les performances de tous les appareils du réseau. 
+La surveillance permet de décider s'il est temps de segmenter le réseau en plusieurs petits VLANs plus
+ efficaces.
