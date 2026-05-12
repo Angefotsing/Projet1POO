@@ -542,3 +542,66 @@ aux dossiers partagés de l'entreprise en cas d'attaque ou de malware sur son ap
  qui peut saturer la bande passante et ralentir les performances de tous les appareils du réseau. 
 La surveillance permet de décider s'il est temps de segmenter le réseau en plusieurs petits VLANs plus
  efficaces.
+
+# TP9 - Persistance et organisation professionnelle
+
+## Objectif
+L'objectif de ce TP est d'ajouter une couche de persistance à l'application en mettant en œuvre la lecture
+ et l'écriture de fichiers. Cela permet de sauvegarder durablement les besoins, les plans, les VLANs, les 
+recommandations et les rapports générés par le système.
+
+## Notions étudiées
+* *Persistance des données* : Capacité à conserver les informations après la fermeture du programme.
+* *Fichiers CSV* : Utilisation d'un format structuré pour l'importation et l'exportation de données.
+* *Architecture Professionnelle* : Organisation du code en couches via les packages repository et service.
+* *Entrées/Sorties (I/O)* : Manipulation des flux de données en Java.
+
+## Fichiers utilisés
+* *Fichiers d'entrée* : besoins.csv (contenant les données brutes à traiter).
+* *Fichiers générés* : rapport_technique.txt, sauvegarde_plans.csv.
+
+## Scénarios testés
+1.  Lecture et chargement automatique des équipements depuis le fichier CSV.
+2.  Modification des données en mémoire et sauvegarde dans un nouveau fichier.
+3.  Génération d'un rapport textuel après analyse des besoins réseaux.
+4.  Vérification de l'intégrité des données après redémarrage de l'application.
+
+## Difficultés rencontrées
+* Gestion des exceptions lors de l'accès aux fichiers (FileNotFoundException, IOException).
+* Parsing des lignes du fichier CSV pour transformer du texte en objets Java.
+* Respect de la séparation des responsabilités entre le stockage (Repository) et la logique (Service).
+
+## Réponses aux questions
+
+1.  *Qu'est-ce que la persistance des données ?*
+    C'est la caractéristique des données qui survivent à l'arrêt du processus qui les a créées. Sans 
+persistance, les données sont stockées uniquement en RAM et disparaissent à la fermeture du logiciel.
+2.  *Pourquoi une application professionnelle doit-elle sauvegarder ses résultats ?*
+
+    Pour garantir la continuité du travail, permettre l'audit des actions passées, partager des informations
+ entre différents utilisateurs et éviter la perte de données critiques en cas de panne.
+
+3.  *Quelle est la différence entre un fichier CSV et un rapport texte ?*
+    Un fichier CSV est un format *structuré* (données séparées par des délimiteurs) destiné à être lu par une
+ machine ou un tableur. Un rapport texte est un format *non structuré* destiné à être lu par un humain.
+
+4.  *Pourquoi a-t-on créé un package repository ?*
+    Il sert à isoler toute la logique d'accès aux données (lecture/écriture fichiers, base de données).
+ C'est la couche qui gère le stockage.
+
+5.  *Pourquoi a-t-on créé un package service ?*
+    Il contient la "logique métier" de l'application. Il fait le lien entre les données brutes du repository 
+et les besoins de l'utilisateur (calculs, vérifications).
+
+6.  *Pourquoi ne faut-il pas écrire tout le code dans la classe Main ?*
+    Pour éviter le code "spaghetti". Une classe Main trop chargée est difficile à lire, impossible à 
+ unitairement et très complexe à maintenir ou à faire évoluer.
+
+7.  *Pourquoi le fichier besoins.csv rend-il l'application plus flexible ?*
+    Parce qu'il permet de modifier les données d'entrée sans avoir à modifier ou à recompiler le code source
+ Java.
+
+8.  *Pourquoi la séparation en packages améliore-t-elle la maintenabilité du projet ?*
+    Elle permet de localiser rapidement une erreur (ex: un problème de calcul est dans service, un problème 
+de fichier est dans repository) et permet à plusieurs développeurs de travailler sur des couches différentes
+ sans se gêner.
